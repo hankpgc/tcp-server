@@ -8,24 +8,24 @@
 
 ```
                    ┌─────────────────────────────────┐
-                   │           主執行緒               │
-                   │                                  │
-  clients ──────►  │  epoll_wait()                    │
-                   │    │                             │
-                   │    ├─ 新連線                      │
-                   │    │     accept() + EPOLL_ADD     │
-                   │    │     (EPOLLET | EPOLLONESHOT) │
+                   │           主執行緒                │
+                   │                                 │
+  clients ──────►  │  epoll_wait()                   │
+                   │    │                            │
+                   │    ├─ 新連線                     │
+                   │    │     accept() + EPOLL_ADD   │
+                   │    │     (EPOLLET | EPOLLONESHOT)│
                    │    │                             │
                    │    └─ 可讀事件                    │
-                   │          enqueue(fd)             │
+                   │          enqueue(fd)            │
                    └──────────────┬──────────────────┘
                                   │ 有界環狀佇列
                                   │ (mutex + 2x condvar)
                    ┌──────────────▼──────────────────┐
                    │         執行緒池（x4）            │
-                   │                                  │
-                   │  dequeue() → recv() → send()     │
-                   │           → epoll_rearm()        │
+                   │                                 │
+                   │  dequeue() → recv() → send()    │
+                   │           → epoll_rearm()       │
                    └─────────────────────────────────┘
 ```
 
